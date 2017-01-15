@@ -8,18 +8,19 @@
 
 {
     'name': "Company currency in invoices",
-    'version': "9.0.1.0.0",
+    'version': "10.0.1.0.0",
     'author': "Zikzakmedia SL, "
               "Joaquín Gutierrez, "
               "Serv. Tecnol. Avanzados - Pedro M. Baeza, "
               "Tecnativa, "
+              "Sébastien Namèche, "
               "Odoo Community Association (OCA) ",
     'website': "https://odoo-community.org/",
-    'category': "Localisation / Accounting",
+    'category': "Accounting",
     'license': "AGPL-3",
     'depends': ["account"],
     'data': [
-        "views/account_invoice_view.xml"
+        "views/account_invoice.xml"
     ],
     'installable': True,
 }
