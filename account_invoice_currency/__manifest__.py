@@ -13,7 +13,6 @@
               "Joaquín Gutierrez, "
               "Serv. Tecnol. Avanzados - Pedro M. Baeza, "
               "Tecnativa, "
-              "Sébastien Namèche, "
               "Odoo Community Association (OCA) ",
     'website': "https://odoo-community.org/",
     'category': "Accounting",
