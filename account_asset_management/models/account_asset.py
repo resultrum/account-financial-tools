@@ -610,9 +610,12 @@ class AccountAsset(models.Model):
             depreciation_base = self.purchase_value - self.salvage_value
         return depreciation_base
 
-    @api.depends('purchase_value', 'salvage_value', 'child_ids',
-                 'child_ids.write_date',
-                 'child_ids.depreciation_base')
+    @api.depends(
+        'purchase_value',
+        'salvage_value',
+        'child_ids',
+        'child_ids.depreciation_base'
+    )
     @api.multi
     def _depreciation_base(self):
         for asset in self:
@@ -623,16 +626,23 @@ class AccountAsset(models.Model):
             asset.depreciation_base = depreciation_base
 
     @api.multi
-    @api.depends('purchase_value', 'salvage_value',
-                 'depreciation_line_ids.amount',
-                 'depreciation_line_ids.init_entry',
-                 'depreciation_line_ids.move_check',
-                 'depreciation_line_ids.move_id', 'child_ids.write_date',
-                 'child_ids.depreciation_base')
+    @api.depends(
+        'purchase_value',
+        'salvage_value',
+        'depreciation_line_ids.amount',
+        'depreciation_line_ids.init_entry',
+        'depreciation_line_ids.move_check',
+        'depreciation_line_ids.move_id',
+        'depreciation_line_ids.move_id.state',
+        'child_ids.value_depreciated',
+        'child_ids.depreciation_base'
+    )
     def _compute_depreciation(self):
         for asset in self:
-            child_ids = self.search([('parent_id', 'child_of', [asset.id]),
-                                     ('type', '=', 'normal')])
+            child_ids = self.search([
+                ('parent_id', 'child_of', [asset.id]),
+                ('type', '=', 'normal')
+            ])
             if child_ids:
                 self.env.cr.execute(
                     "SELECT COALESCE(SUM(amount),0.0) AS amount "
@@ -946,9 +956,9 @@ class AccountAsset(models.Model):
         if vals.get('method_time'):
             if vals['method_time'] != 'year' and not vals.get('prorata'):
                 vals['prorata'] = True
+        res = super(AccountAsset, self).write(vals)
         for asset in self:
             asset_type = vals.get('type') or asset.type
-            res = super(AccountAsset, self).write(vals)
             if asset_type == 'view' or \
                     self.env.context.get('asset_validate_from_write'):
                 continue
